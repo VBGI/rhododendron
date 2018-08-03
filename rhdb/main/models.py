@@ -49,6 +49,18 @@ class Image(models.Model, UpdaterMixin):
                              max_length=100)
     description = RichTextField(default='', blank=True, verbose_name='описание')
 
+    def __str__(self):
+        return self.title if self.title else self.description if self.description else self.pk
+
+
+class Page(models.Model, UpdaterMixin):
+    content = RichTextField(default='', blank=True,
+                            verbose_name='содержание')
+    title = models.CharField(default='', blank=True, verbose_name='название',
+                             max_length=50)
+
+    def __str__(self):
+        return self.title if self.title else self.pk
 
 
 
