@@ -135,6 +135,7 @@ class ImagesTest(TestCase):
     def setUpTestData(cls):
         sp1 = Species.objects.create(name='Test')
         rec1 = Record.objects.create(species=sp1, district='Home')
+        cls.rec = rec1
         cls.im1 = Image.objects.create(order=0, title='greate image',
                                        description='full image description',
                                        src=SimpleUploadedFile('myimage.jpg',
@@ -145,19 +146,36 @@ class ImagesTest(TestCase):
                                        src=SimpleUploadedFile('theimage2.jpg',
                                                               b'another file content'),
                                        record=rec1)
+        cls.im3 = Image.objects.create(order=2, title='new image',
+                                       description='',
+                                       src=SimpleUploadedFile('newimage.jpg',
+                                                              b'content'))
+        cls.client = Client()
 
     def test_all_images(self):
-        rec = Record.objects.all()[0]
-        self.assertEqual(rec.image_set.count(), 2)
+        self.assertEqual(self.rec.image_set.count(), 2)
 
-    def test_reverse_relation(self):
-        rec = Record.objects.all()[0]
-        for im in Image.objects.all():
-            self.assertEqual(rec, im.record)
+    def test_related_images(self):
+        res = self.rec.image_set.all()
+        self.assertEqual(len(res), 2)
+        self.assertNotIn(self.im3, res)
+
+    def test_related_view_type(self):
+        response = self.client.get(reverse('list-images'), kwargs={'pk': self.rec})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('json' in response.get('Content-Type', ''))
+
+    def test_reslate_view_content(self):
+        response = self.client.get(reverse('list-images'),
+                                   kwargs={'pk': self.rec})
+        self.assertContains(response, self.im1.title)
+        self.assertcontains(response, self.im2.title)
 
     def tearDown(self):
-         self.im1.src.delete()
-         self.im2.src.delete()
+        self.im1.src.delete()
+        self.im2.src.delete()
+        self.im3.src.delete()
+
 
 # --------------- Species info tests
 
@@ -177,10 +195,5 @@ class SpeciesInfoTest(TestCase):
         sp = Species.objects.all()[0]
         response = self.client.get(reverse('species-info', kwargs={'pk': sp.pk}), {'pk': sp.pk})
         self.assertContains(response, 'this is common')
-
-
-
-
-
 
 

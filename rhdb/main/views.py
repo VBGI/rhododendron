@@ -30,7 +30,9 @@ class RecordDetail(DetailView):
     template_name = 'record-details.html'
 
 
-# class ListRelatedImages(ListView):
-#     # TODO: Should return json-reponse, -- a set of all images related with the current record.
-#     model = Image
-#     template_name= 'image-datails.html'
+class ListRelatedImages(ListView):
+    # TODO: Should return json-reponse, -- a set of all images related with the current record.
+    model = Image
+    template_name= 'image-datails.html'
+
+
