@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage
 from django.conf import settings
+from django.core import serializers
+from django.http import JsonResponse
 from .filters import RecordFilter
 from .models  import Record, Species, Image
 from django.views.generic import DetailView, ListView
@@ -31,8 +33,24 @@ class RecordDetail(DetailView):
 
 
 class ListRelatedImages(ListView):
-    # TODO: Should return json-reponse, -- a set of all images related with the current record.
     model = Image
-    template_name= 'image-datails.html'
+    http_method_names = ['get',]
 
+    def dispatch(self, request, *args, **kwargs):
+        self.record_pk = self.kwargs.get('pk', -1)
+        try:
+            Record.objects.get(pk=self.record_pk)
+        except Record.DoesNotExist:
+            self.record_pk = -1
+        return super(ListRelatedImages, self).dispatch(request, *args, **kwargs)
 
+    def get_queryset(self):
+        if self.record_pk < 0:
+            return self.model.objects.empty()
+        else:
+            return self.model.objects.filter(record=self.record_pk)
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = serializers.serialize("json", queryset)
+        return JsonResponse(data, status=200, safe=False)

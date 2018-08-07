@@ -161,15 +161,14 @@ class ImagesTest(TestCase):
         self.assertNotIn(self.im3, res)
 
     def test_related_view_type(self):
-        response = self.client.get(reverse('list-images'), kwargs={'pk': self.rec})
+        response = self.client.get(reverse('list-images', kwargs={'pk': self.rec.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('json' in response.get('Content-Type', ''))
 
     def test_reslate_view_content(self):
-        response = self.client.get(reverse('list-images'),
-                                   kwargs={'pk': self.rec})
+        response = self.client.get(reverse('list-images', kwargs={'pk': self.rec.pk}))
         self.assertContains(response, self.im1.title)
-        self.assertcontains(response, self.im2.title)
+        self.assertContains(response, self.im2.title)
 
     def tearDown(self):
         self.im1.src.delete()
