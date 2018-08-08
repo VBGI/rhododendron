@@ -21,6 +21,9 @@ def record_list(request):
                   {'objects': objects},
                   content_type='text/plain; charset utf-8')
 
+def base_view(request):
+    return render(request, 'base.html')
+
 
 class RecordDetail(DetailView):
     model = Record

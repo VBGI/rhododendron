@@ -248,13 +248,25 @@ class PageAttributesTests(metaclass=auto_attr_helper('page',
         self.assertContains(response, 'another content')
 
 
-
-
-
-
-
 # -------------- Context processor testing
 class SpeciesInfoTest(TestCase):
     pass
 
+
+# ------------- Base detials & rendering
+
+class BaseDetailTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.page = Page.objects.create(title='unique_title', public=True)
+        cls.client = Client()
+
+    def test_base_page_status(self):
+        response = self.client.get(reverse('base-view'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_base_content(self):
+        response = self.client.get(reverse('base-view'))
+        self.assertContains(response, 'unique_title')
+        self.assertContains(response, 'Rhododendron')
 
