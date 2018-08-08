@@ -1,2 +1,21 @@
-{{record.latitude}}
-{{record.content}}
+{%extends 'base.html' %}
+{%block main%}
+ <div class="col-md-12 base-main">
+    <h3 class="pb-3 mb-4 font-italic border-bottom">{{object.species.name}}</h3>
+     <div class="hidden">{{object.species.info}}</div>
+     <div class="base-post">
+        {%if object.latitude and object.longitude%}
+         <h5>Географические координаты: </h5>
+         <p>Широта: {{object.latitude}}</p>
+         <p>Долгота: {{object.longitude}}</p>
+        {%endif%}
+         {%if object.region%}
+          <p>Регион: {{object.region}}</p>
+         {%endif%}
+         {%if object.district%}
+          <p>Район: {{object.district}}</p>
+         {%endif%}
+        {{object.content|safe}}
+     </div>
+ </div>
+{%endblock%}

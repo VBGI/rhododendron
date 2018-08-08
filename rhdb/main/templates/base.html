@@ -1,0 +1,85 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Russian Far East Rhododendron database; база данных по распространению представителей рода Rhododendron на Дальнем Востоке России">
+    <meta name="author" content="Dmitry E. Kislov; e-mail: mail@easydan.com">
+    <link rel="icon" href="https://getbootstrap.com/favicon.ico"> <!-- TODO: Customize icon! -->
+    <title>Род Rhododendron: распространение и видовое разнообразие на Дальнем Востоке России</title>
+    <link href="{% static 'base_static/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'base_static/css.css' %}" rel="stylesheet">
+    <link href="{% static 'base_static/base.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+
+      <div class="nav-scroller py-1 mb-2">
+        <nav class="nav d-flex">
+          {%for page in pages%}
+            <a class="p-2 text-muted" href="{{page.get_absolute_url}}">{{page.title}}</a>
+          {%endfor%}
+        </nav>
+      </div>
+
+      <div class="jumbotron p-3 p-md-5 text-white rounded bg-secondary">
+        <div class="col-md-12 px-0">
+          <p class="lead mb-0"><a href="/" class="text-white font-weight-bold">
+              База данных по распространению видов рода <i>Rhododendron</i> на Дальнем Востоке
+              России</a></p>
+        </div>
+      </div>
+
+    <main role="main" class="container">
+      <div class="row">
+        {%block main%}
+        <div class="col-md-8 base-main">
+          <h3 class="pb-3 mb-4 font-italic border-bottom">
+            Карта распространения
+          </h3>
+          <div id="base-map">
+              Map should be here (google map or something else!)
+          </div>
+        </div>
+
+        <aside class="col-md-4 base-sidebar">
+          <div class="p-3 mb-3 bg-light rounded">
+            <h4 class="font-italic">Поиск</h4>
+            <div id="search-menu">
+                Search form should be here!!!!
+            </div>
+          </div>
+
+          <div class="p-3">
+            <h4 class="font-italic">Текущая запись</h4>
+            <div id="record-info">
+                Record info should be here!
+            </div>
+          </div>
+        </aside><!-- /.base-sidebar -->
+        {%endblock%} <!-- Main django block -->
+      </div><!-- /.row -->
+    </main><!-- /.container -->
+
+    <footer class="base-footer">
+      <p>Blog template built for <a href="https://getbootstrap.com/">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+    <script src="{%static 'base_static/jquery-3.js' %}" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="{%static 'base_static/popper.js' %}"></script>
+    <script src="{%static 'base_static/bootstrap.js' %}"></script>
+    <script src="{%static 'base_static/holder.js' %}"></script>
+    <script>
+      Holder.addTheme('thumb', {
+        bg: '#55595c',
+        fg: '#eceeef',
+        text: 'Thumbnail'
+      });
+    </script>
+    </div>
+  </body>
+</html>

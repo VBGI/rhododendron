@@ -1,0 +1,11 @@
+{%extends 'base.html' %}
+{%block main%}
+ <div class="col-md-12 base-main">
+    <h3 class="pb-3 mb-4 font-italic border-bottom">
+            {{object.title}}
+    </h3>
+     <div class="base-post">
+     {{object.content|safe}}
+     </div>
+ </div>
+{%endblock%}

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core import serializers
 from django.http import JsonResponse
 from .filters import RecordFilter
-from .models  import Record, Species, Image
+from .models import Record, Species, Image, Page
 from django.views.generic import DetailView, ListView
 
 
@@ -22,14 +22,14 @@ def record_list(request):
                   content_type='text/plain; charset utf-8')
 
 
-class SpeciesDetail(DetailView):
-    model = Species
-    template_name = 'species-details.html'
-
-
 class RecordDetail(DetailView):
     model = Record
     template_name = 'record-details.html'
+
+
+class PageDetail(DetailView):
+    model = Page
+    template_name = 'page-details.html'
 
 
 class ListRelatedImages(ListView):

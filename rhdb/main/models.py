@@ -58,6 +58,7 @@ class Page(models.Model, UpdaterMixin):
                             verbose_name='содержание')
     title = models.CharField(default='', blank=True, verbose_name='название',
                              max_length=50)
+    public = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
         return self.title if self.title else self.pk

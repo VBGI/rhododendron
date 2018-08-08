@@ -1,7 +1,7 @@
 from django.test import TestCase, TransactionTestCase, Client
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from .models import Species, Image, Record
+from .models import Species, Image, Record, Page
 from .filters import RecordFilter
 from django.urls import reverse
 
@@ -17,6 +17,9 @@ record_allowed_attributes = ('species', 'updated', 'created', 'region',
 
 image_allowed_attributes = ('description', 'title', 'created', 'updated',
                              'src', 'record', 'order')
+
+page_allowed_attrs = ('public','content', 'title')
+
 # -------------------------------------
 
 def auto_attr_helper(model_name, *args):
@@ -43,7 +46,7 @@ def auto_attr_helper(model_name, *args):
 # ------------- Test classes -------------
 
 class BasicSpeciesTests(metaclass=auto_attr_helper('species',
-                                                 *species_allowed_attributes)):
+                                                   *species_allowed_attributes)):
     @classmethod
     def setUpTestData(cls):
         cls.species = Species.objects.create(name='Test')
@@ -53,14 +56,14 @@ class BasicSpeciesTests(metaclass=auto_attr_helper('species',
 
 
 class BasicImagesTests(metaclass=auto_attr_helper('image',
-                                                *image_allowed_attributes)):
+                                                  *image_allowed_attributes)):
     @classmethod
     def setUpTestData(cls):
         cls.image = Image.objects.create()
 
 
 class BasicRecordTests(metaclass=auto_attr_helper('record',
-                                                *record_allowed_attributes)):
+                                                  *record_allowed_attributes)):
     @classmethod
     def setUpTestData(cls):
         cls.species = Species.objects.create(name='Test')
@@ -68,7 +71,6 @@ class BasicRecordTests(metaclass=auto_attr_helper('record',
 
 
 # ----------- Filtering engine testing ------------
-
 class ListRecordsTest(TestCase):
 
     @classmethod
@@ -127,8 +129,40 @@ class ListRecordsTest(TestCase):
 
 
 
-# Related images testing
+# ---------------- Record details
+class RecordDetailTest(TestCase):
 
+    @classmethod
+    def setUpTestData(cls):
+        sp1 = Species.objects.create(name='Test', info='spinfo')
+        cls.rec = Record.objects.create(species=sp1, district='Home',
+                                        region='one_region',
+                                        content='simplified_content')
+        Page.objects.create(title='yet_another_title1', public=True)
+        Page.objects.create(title='yet_another_title2', public=True)
+        cls.client = Client()
+
+    def test_record_detail_status(self):
+        response = self.client.get(reverse('record-info', kwargs={'pk': self.rec.pk}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_record_complex(self):
+        response = self.client.get(
+            reverse('record-info', kwargs={'pk': self.rec.pk}))
+        self.assertContains(response, 'Home')
+        self.assertContains(response, 'one_region')
+        self.assertContains(response, 'simplified_content')
+        self.assertContains(response, 'spinfo')
+        self.assertContains(response, 'Test')
+
+    def test_pages_render(self):
+        response = self.client.get(
+            reverse('record-info', kwargs={'pk': self.rec.pk}))
+        self.assertContains(response, 'yet_another_title1')
+        self.assertContains(response, 'yet_another_title2')
+
+
+# ---------------- 0 Related images testing
 class ImagesTest(TestCase):
 
     @classmethod
@@ -194,5 +228,33 @@ class SpeciesInfoTest(TestCase):
         sp = Species.objects.all()[0]
         response = self.client.get(reverse('species-info', kwargs={'pk': sp.pk}), {'pk': sp.pk})
         self.assertContains(response, 'this is common')
+
+
+# ----------------- Page attributes auto-tests
+class PageAttributesTests(metaclass=auto_attr_helper('page',
+                                                     *page_allowed_attrs)
+                        ):
+    @classmethod
+    def setUpTestData(cls):
+        cls.page = Page.objects.create(title='unique title',
+                                       content='another content',
+                                       public=True)
+        cls.client = Client()
+
+    def test_page_generated(self):
+        response = self.client.get(reverse('page-info', kwargs={'pk': self.page.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'unique title')
+        self.assertContains(response, 'another content')
+
+
+
+
+
+
+
+# -------------- Context processor testing
+class SpeciesInfoTest(TestCase):
+    pass
 
 
