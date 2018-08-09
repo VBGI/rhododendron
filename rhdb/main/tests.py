@@ -127,7 +127,9 @@ class ListRecordsTest(TestCase):
         response = self.client.get(reverse('record-list'), {})
         self.assertTrue('plain' in response.get('Content-Type', ''))
 
-
+    def test_list_record_template(self):
+        response = self.client.get(reverse('record-list'), {})
+        self.assertContains(response, 'Последнее изменение')
 
 # ---------------- Record details
 class RecordDetailTest(TestCase):
@@ -232,8 +234,7 @@ class SpeciesInfoTest(TestCase):
 
 # ----------------- Page attributes auto-tests
 class PageAttributesTests(metaclass=auto_attr_helper('page',
-                                                     *page_allowed_attrs)
-                        ):
+                                                     *page_allowed_attrs)):
     @classmethod
     def setUpTestData(cls):
         cls.page = Page.objects.create(title='unique title',

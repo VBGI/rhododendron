@@ -1,6 +1,7 @@
 # coding: utf-8
 from django.db import models
 from ckeditor.fields import RichTextField
+from django.urls import reverse
 
 class UpdaterMixin:
     created = models.DateTimeField(auto_now_add=True)
@@ -15,6 +16,11 @@ class Species(models.Model, UpdaterMixin):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Вид'
+        verbose_name_plural = 'Виды'
+        ordering = ('pk',)
 
 
 class Record(models.Model, UpdaterMixin):
@@ -52,6 +58,10 @@ class Image(models.Model, UpdaterMixin):
     def __str__(self):
         return self.title if self.title else self.description if self.description else self.pk
 
+    class Meta:
+        verbose_name = 'Изображение'
+        verbose_name_plural = 'Изображения'
+        ordering = ('pk',)
 
 class Page(models.Model, UpdaterMixin):
     content = RichTextField(default='', blank=True,
@@ -63,5 +73,10 @@ class Page(models.Model, UpdaterMixin):
     def __str__(self):
         return self.title if self.title else self.pk
 
+    class Meta:
+        verbose_name = 'Страница'
+        verbose_name_plural = 'Страницы'
+        ordering = ('pk',)
 
-
+    def get_absolute_url(self):
+        return reverse('page-info', kwargs={'pk': self.pk})

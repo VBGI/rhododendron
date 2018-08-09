@@ -11,15 +11,14 @@ from django.views.generic import DetailView, ListView
 def record_list(request):
     filtered_objects = RecordFilter(request.GET, queryset=Record.objects.all())
     page = request.GET.get('page', 1)
-    objects = Paginator(filtered_objects.qs,
-                        getattr(settings, 'RHD_PAGINATION_SIZE', 50))
+    paginator = Paginator(filtered_objects.qs,
+                          getattr(settings, 'RHD_PAGINATION_SIZE', 50))
     try:
-        objects = objects.page(page)
+        objects = paginator.get_page(page)
     except EmptyPage:
-        objects = objects.page(1)
-    return render(request, 'list.html',
-                  {'objects': objects},
-                  content_type='text/plain; charset utf-8')
+        objects = paginator.get_page(1)
+    return render(request, 'record-list.html',
+                  {'objects': objects})
 
 def base_view(request):
     return render(request, 'base.html')

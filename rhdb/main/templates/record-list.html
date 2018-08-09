@@ -1,0 +1,37 @@
+{%extends 'base.html' %}
+{%block main%}
+ <div class="col-md-12 base-main">
+    <h3 class="pb-3 mb-4 font-italic border-bottom">Список записей</h3>
+     <div class="pagination">
+        <span class="step-links">
+            {% if objects.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ objects.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+            <span class="current">
+                Страница {{ objects.number }} из {{ objects.paginator.num_pages }}.
+            </span>
+            {% if objects.has_next %}
+                <a href="?page={{ objects.next_page_number }}">Следующая</a>
+                <a href="?page={{ objects.paginator.num_pages }}">Предыдущая &raquo;</a>
+            {% endif %}
+        </span>
+     </div>
+     <div class="base-post">
+         {%if objects%}
+         <ul>
+            {%for obj in objects%}
+            <li>
+                <a href="{%url 'record-list' %}">{{obj.species.name}}</a>
+                 {%if obj.district or obj.region%} ({{obj.district}} {{obj.region}}){%endif%}
+                <i>Последнее изменение: {{obj.updated}}</i>
+            </li>
+             {%endfor%}
+         </ul>
+         {%else%}
+         <strong>Список пуст</strong>
+         {%endif%}
+     {{object.content|safe}}
+     </div>
+ </div>
+{%endblock%}
