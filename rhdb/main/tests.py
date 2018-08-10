@@ -125,7 +125,7 @@ class ListRecordsTest(TestCase):
 
     def test_content_type(self):
         response = self.client.get(reverse('record-list'), {})
-        self.assertTrue('plain' in response.get('Content-Type', ''))
+        self.assertTrue('html' in response.get('Content-Type', ''))
 
     def test_list_record_template(self):
         response = self.client.get(reverse('record-list'), {})
