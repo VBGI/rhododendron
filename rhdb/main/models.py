@@ -69,7 +69,8 @@ class Page(models.Model, UpdaterMixin):
     title = models.CharField(default='', blank=True, verbose_name='название',
                              max_length=50)
     public = models.BooleanField(default=False, blank=True)
-    slug = models.URLField(default='', verbose_name='путь')
+    slug = models.CharField(default='', verbose_name='путь', max_length=10,
+                            blank=True)
 
     def __str__(self):
         return self.title if self.title else self.pk
@@ -80,7 +81,9 @@ class Page(models.Model, UpdaterMixin):
         ordering = ('pk',)
 
     def get_absolute_url(self):
-        if self.slug:
-            return reverse('base-view') + self.slug.strip()
+        if self.slug.strip() == '/':
+            return reverse('base-view')
+        elif self.slug:
+            return reverse('base-view') + self.slug
         else:
             return reverse('page-info', kwargs={'pk': self.pk})
