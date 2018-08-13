@@ -17,3 +17,9 @@ float: left;
 }
 
 
+label{
+display: block;
+font-weight: bold;
+margin-top: 3px;
+margin-bottom: -2px;
+}

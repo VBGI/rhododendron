@@ -56,14 +56,22 @@
           <div class="p-3 mb-3 bg-light rounded">
             <h4 class="font-italic">Поиск</h4>
             <div id="search-menu">
-                Search form should be here!!!!
+                <form method="GET" id="base-search-form">
+                    <label for="search-species">Вид/род</label>
+                    <input type="text" value="" placeholder="Название вида/рода" id="search-species">
+                    <label for="search-region">Регион</label>
+                    <input type="text" value="" placeholder="Название региона" id="search-region">
+                    <label for="search-district">Район</label>
+                    <input type="text" value="" placeholder="Название района" id="search-district">
+                    <input type="submit" value="Поиск">
+                </form>
             </div>
           </div>
 
           <div class="p-3">
-            <h4 class="font-italic">Текущая запись</h4>
+            <h4 class="font-italic">Результаты поиска</h4>
             <div id="record-info">
-                Record info should be here!
+                Всего записей: {{total}}
             </div>
           </div>
         </aside><!-- /.base-sidebar -->
