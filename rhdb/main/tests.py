@@ -123,6 +123,13 @@ class ListRecordsTest(TestCase):
         self.assertNotContains(response, 'Valley')
         self.assertNotContains(response, 'Home')
 
+    def test_not_contain_google_maps(self):
+        response = self.client.get(reverse('record-list'),
+                                   {'species__name__icontains': 'Te',
+                                   'district__icontains': 'gn'})
+        self.assertNotContains(response, 'map.js')
+
+
     def test_content_type(self):
         response = self.client.get(reverse('record-list'), {})
         self.assertTrue('html' in response.get('Content-Type', ''))
@@ -271,3 +278,6 @@ class BaseDetailTest(TestCase):
         self.assertContains(response, 'unique_title')
         self.assertContains(response, 'Rhododendron')
 
+    def test_google_map_included(self):
+        response = self.client.get(reverse('base-view'))
+        self.assertContains(response, 'map.js')
