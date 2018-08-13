@@ -22,7 +22,7 @@
          <ul>
             {%for obj in objects%}
             <li>
-                <a href="{%url 'record-list' %}">{{obj.species.name}}</a>
+                <a href="{%url 'record-info' obj.pk %}">{{obj.species.name}}</a>
                  {%if obj.district or obj.region%} ({{obj.district}} {{obj.region}}){%endif%}
                 <i>Последнее изменение: {{obj.updated}}</i>
             </li>
@@ -34,4 +34,7 @@
      {{object.content|safe}}
      </div>
  </div>
+{%endblock%}
+
+{%block map_js%}
 {%endblock%}

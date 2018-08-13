@@ -1,0 +1,19 @@
+
+#base-map{
+min-height: 400px;
+width: 100%;
+}
+
+
+#random-images{
+width: 100%;
+clear: both;
+min-height: 100px;
+}
+
+#random-images ul li{
+padding: 10px;
+float: left;
+}
+
+
