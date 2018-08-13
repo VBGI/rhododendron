@@ -32,13 +32,19 @@ class Record(models.Model, UpdaterMixin):
                               max_length=70)
     district = models.CharField(blank=True, default='', verbose_name='район',
                                 max_length=70)
-    latitude = models.FloatField(null=True, verbose_name='широта')
-    longitude = models.FloatField(null=True, verbose_name='долгота')
+    latitude = models.FloatField(null=True, verbose_name='широта',
+                                 blank=True, default=0)
+    longitude = models.FloatField(null=True, verbose_name='долгота',
+                                  blank=True, default=0)
 
     def __str__(self):
         #FIXME: ugly string...
         return ((self.species.name if self.species else ' ') +
                 self.region + ' ' + self.district).strip()
+
+    def get_absolute_url(self):
+        return reverse('record-info', kwargs={'pk': self.pk})
+
 
     class Meta:
         verbose_name = 'Запись'
@@ -54,6 +60,7 @@ class Image(models.Model, UpdaterMixin):
     title = models.CharField(default='', blank=True, verbose_name='название',
                              max_length=100)
     description = RichTextField(default='', blank=True, verbose_name='описание')
+    public = models.BooleanField(default=False, blank=True, verbose_name='опубликовать')
 
     def __str__(self):
         return self.title if self.title else self.description if self.description else self.pk
@@ -87,3 +94,5 @@ class Page(models.Model, UpdaterMixin):
             return reverse('base-view') + self.slug
         else:
             return reverse('page-info', kwargs={'pk': self.pk})
+
+
