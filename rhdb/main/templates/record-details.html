@@ -2,7 +2,7 @@
 {%block main%}
  <div class="col-md-12 base-main">
     <h3 class="pb-3 mb-4 font-italic border-bottom">{{object.species.name}}</h3>
-     <div class="hidden">{{object.species.info}}</div>
+     <div class="hidden">{{object.species.info|safe}}</div>
      <div class="base-post">
         {%if object.latitude and object.longitude%}
          <h5>Географические координаты: </h5>

@@ -52,30 +52,31 @@
               </ul>
             {%endif%}
         </div>
+    {%block sidebar %}
         <aside class="col-md-4 base-sidebar">
           <div class="p-3 mb-3 bg-light rounded">
             <h4 class="font-italic">Поиск</h4>
             <div id="search-menu">
-                <form method="GET" id="base-search-form">
+                <form method="GET" id="base-search-form" action="{%url 'record-list' %}">
                     <label for="search-species">Вид/род</label>
-                    <input type="text" value="" placeholder="Название вида/рода" id="search-species">
+                    <input type="text" name="species__name__icontains" value="" placeholder="Название вида/рода" id="search-species">
                     <label for="search-region">Регион</label>
-                    <input type="text" value="" placeholder="Название региона" id="search-region">
+                    <input type="text" value="" name="region__icontains" placeholder="Название региона" id="search-region">
                     <label for="search-district">Район</label>
-                    <input type="text" value="" placeholder="Название района" id="search-district">
+                    <input type="text" value="" name="district_icontains" placeholder="Название района" id="search-district">
                     <input type="submit" value="Поиск">
                 </form>
             </div>
           </div>
-
           <div class="p-3">
             <h4 class="font-italic">Результаты поиска</h4>
-            <div id="record-info">
-                Всего записей: {{total}}
-            </div>
+              <div class="alert alert-success">
+                <strong>Всего записей:</strong> {{total}}.
+              </div>
           </div>
         </aside><!-- /.base-sidebar -->
-        {%endblock%} <!-- Main django block -->
+    {%endblock%}
+    {%endblock%} <!-- Main django block -->
       </div><!-- /.row -->
     </main><!-- /.container -->
 

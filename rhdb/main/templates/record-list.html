@@ -1,6 +1,6 @@
 {%extends 'base.html' %}
 {%block main%}
- <div class="col-md-12 base-main">
+ <div class="col-md-8 base-main">
     <h3 class="pb-3 mb-4 font-italic border-bottom">Список записей</h3>
      <div class="pagination">
         <span class="step-links">
@@ -29,11 +29,18 @@
              {%endfor%}
          </ul>
          {%else%}
-         <strong>Список пуст</strong>
+         <div class="alert alert-warning">
+            <strong>Список пуст</strong>
+         </div>
          {%endif%}
      {{object.content|safe}}
      </div>
  </div>
+
+{%block sidebar %}
+{{block.super}}
+{%endblock%}
+
 {%endblock%}
 
 {%block map_js%}
