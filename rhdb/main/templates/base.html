@@ -39,8 +39,7 @@
           <h3 class="pb-3 mb-4 font-italic border-bottom">
             Карта распространения
           </h3>
-          <div id="base-map">
-          </div>
+          <div id="base-map"></div>
             {%if random_images%}
               <ul id="random-images">
                   {%for image in random_images%}
@@ -99,9 +98,8 @@
     </script>
     </div>
   {%block map_js%}
-    <script src="{%static 'base_static/map.js' %}"></script>
-     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_3-gteTrZllW9zGCes2o1HT9ylM6QRXk&callback=baseMap">
-    </script>
+    <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <script src="{%static 'base_static/map.js' %}" type="text/javascript"></script>
   {%endblock%}
   </body>
 </html>

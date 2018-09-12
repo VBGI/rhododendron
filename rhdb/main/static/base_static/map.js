@@ -1,43 +1,94 @@
-function baseMap() {
-    var centerMap = {lat: 43.1, lng: 131.0};
-    var map = new google.maps.Map(document.getElementById('base-map'), {
-         zoom: 4,
-         center: centerMap
-        });
+ymaps.ready(init);
 
-    var contentString =
-            '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
-            '<div id="bodyContent">'+
-            '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-            'sandstone rock formation in the southern part of the '+
-            'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-            'south west of the nearest large town, Alice Springs; 450&#160;km '+
-            '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-            'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-            'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-            'Aboriginal people of the area. It has many springs, waterholes, '+
-            'rock caves and ancient paintings. Uluru is listed as a World '+
-            'Heritage Site.</p>'+
-            '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-            'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-            '(last visited June 22, 2009).</p>'+
-            '</div>'+
-            '</div>';
-
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
+function init () {
+    var myMap = new ymaps.Map('base-map', {
+            center: [55.751574, 37.573856],
+            zoom: 10,
+            controls: []
+        }),
+        objectManager = new ymaps.ObjectManager({
+            clusterize: true,
+            clusterDisableClickZoom: true
         });
+    myMap.geoObjects.add(objectManager);
 
-        var marker = new google.maps.Marker({
-          position: centerMap,
-          map: map,
-          title: 'Uluru (Ayers Rock)'
-        });
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
-      }
+    objectManager.objects.events.add('balloonopen', function (e) {
+        // Получим объект, на котором открылся балун.
+        var id = e.get('objectId'),
+            geoObject = objectManager.objects.getById(id);
+        // Загрузим данные для объекта при необходимости.
+        downloadContent([geoObject], id);
+    });
 
+    objectManager.clusters.events.add('balloonopen', function (e) {
+        // Получим id кластера, на котором открылся балун.
+        var id = e.get('objectId'),
+        // Получим геообъекты внутри кластера.
+            cluster = objectManager.clusters.getById(id),
+            geoObjects = cluster.properties.geoObjects;
+
+        // Загрузим данные для объектов при необходимости.
+        downloadContent(geoObjects, id, true);
+    });
+
+    function downloadContent(geoObjects, id, isCluster) {
+        // Создадим массив меток, для которых данные ещё не загружены.
+        var array = geoObjects.filter(function (geoObject) {
+                    return geoObject.properties.balloonContent === 'идет загрузка...' ||
+                        geoObject.properties.balloonContent === 'Not found';
+                }),
+        // Формируем массив идентификаторов, который будет передан серверу.
+            ids = array.map(function (geoObject) {
+                    return geoObject.id;
+                });
+        if (ids.length) {
+            // Запрос к серверу.
+            // Сервер обработает массив идентификаторов и на его основе
+            // вернет JSON-объект, содержащий текст балуна для
+            // заданных меток.
+            ymaps.vow.resolve($.ajax({
+                    // Обратите внимание, что серверную часть необходимо реализовать самостоятельно.
+                    //contentType: 'application/json',
+                    //type: 'POST',
+                    //data: JSON.stringify(ids),
+                    url: 'content.json',
+                    dataType: 'json',
+                    processData: false
+                })).then(function (data) {
+                        // Имитируем задержку от сервера.
+                        return ymaps.vow.delay(data, 1000);
+                }).then(
+                    function (data) {
+                        geoObjects.forEach(function (geoObject) {
+                            // Содержимое балуна берем из данных, полученных от сервера.
+                            // Сервер возвращает массив объектов вида:
+                            // [ {"balloonContent": "Содержимое балуна"}, ...]
+                            geoObject.properties.balloonContent = data[geoObject.id].balloonContent;
+                        });
+                        // Оповещаем балун, что нужно применить новые данные.
+                        setNewData();
+                    }, function () {
+                        geoObjects.forEach(function (geoObject) {
+                            geoObject.properties.balloonContent = 'Not found';
+                        });
+                        // Оповещаем балун, что нужно применить новые данные.
+                        setNewData();
+                    }
+                );
+        }
+
+        function setNewData(){
+            if (isCluster && objectManager.clusters.balloon.isOpen(id)) {
+                objectManager.clusters.balloon.setData(objectManager.clusters.balloon.getData());
+            } else if (objectManager.objects.balloon.isOpen(id)) {
+                objectManager.objects.balloon.setData(objectManager.objects.balloon.getData());
+            }
+        }
+    }
+
+    $.ajax({
+        url: "data.json"
+    }).done(function (data) {
+        objectManager.add(data);
+    });
+}
