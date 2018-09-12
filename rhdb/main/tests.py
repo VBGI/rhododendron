@@ -16,9 +16,10 @@ record_allowed_attributes = ('species', 'updated', 'created', 'region',
                              'district', 'content', 'latitude', 'longitude')
 
 image_allowed_attributes = ('description', 'title', 'created', 'updated',
-                             'src', 'record', 'order')
+                             'src', 'record', 'order', 'category',
+                            'category_slug', 'category_name')
 
-page_allowed_attrs = ('public','content', 'title')
+page_allowed_attrs = ('public','content', 'title', 'order')
 
 # -------------------------------------
 

@@ -61,9 +61,17 @@ class Image(models.Model, UpdaterMixin):
                              max_length=100)
     description = RichTextField(default='', blank=True, verbose_name='описание')
     public = models.BooleanField(default=False, blank=True, verbose_name='опубликовать')
+    category = models.ForeignKey('self', related_name='parent', null=True, blank=True,
+                                 on_delete=models.CASCADE)
+    category_name = models.CharField(default='', blank=True, max_length=300)
+    category_slug = models.CharField(default='', blank=True, max_length=8)
 
     def __str__(self):
         return self.title if self.title else self.description if self.description else self.pk
+
+    def get_children(self):
+        '''Return queryset of all descendants related with the current object'''
+        return self.objects.all() # TODO: Fake function
 
     class Meta:
         verbose_name = 'Изображение'
@@ -78,6 +86,7 @@ class Page(models.Model, UpdaterMixin):
     public = models.BooleanField(default=False, blank=True)
     slug = models.CharField(default='', verbose_name='путь', max_length=10,
                             blank=True)
+    order = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
         return self.title if self.title else self.pk
@@ -85,7 +94,7 @@ class Page(models.Model, UpdaterMixin):
     class Meta:
         verbose_name = 'Страница'
         verbose_name_plural = 'Страницы'
-        ordering = ('pk',)
+        ordering = ('order',)
 
     def get_absolute_url(self):
         if self.slug.strip() == '/':
@@ -96,3 +105,6 @@ class Page(models.Model, UpdaterMixin):
             return reverse('page-info', kwargs={'pk': self.pk})
 
 
+
+
+# TODO:  Image post save and post delete signals that create thumbnails are needed....
