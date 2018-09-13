@@ -24,10 +24,13 @@ def base_view(request):
     return render(request, 'base.html')
 
 
+def herbarium_view(request):
+    return render(request, 'herbarium.html')
+
+
 class RecordDetail(DetailView):
     model = Record
     template_name = 'record-details.html'
-
 
 class PageDetail(DetailView):
     model = Page

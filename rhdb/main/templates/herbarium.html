@@ -1,0 +1,66 @@
+{%extends 'base.html' %}
+{%load static%}
+
+{%block main%}
+ <div class="col-md-12 base-main">
+    <h3 class="pb-3 mb-4 font-italic border-bottom">
+    Образцы рода Rhododendron в гербарии Ботанического сада-института ДВО РАН
+    </h3>
+     <div id="herb-content"></div>
+ </div>
+{%endblock%}
+
+{%block css-block %}
+{{block.super}}
+<link href="{% static 'base_static/herbarium.css' %}" rel="stylesheet">
+{%endblock%}
+
+{%block map_js%}
+ <script type="text/javascript">
+
+    function fillHerbariumRecords(jqXHR, status){
+
+        var filledTemplate =_.template($('#herbarium-template').html(),
+                                       data['data'])
+
+        if (len(data['errors']) != 0){loadingFails(data)}
+        else {
+              $('#herb-content').html(filledTemplate);
+              };
+    };
+
+    function loadingFails(data){
+                 $('#herb-content').html('<div class="alert alert-danger">' +
+                                         '<h4>Произошла ошибка в процессе формирования запроса к базе данных Ботанического сада-института ДВО РАН </h4>' +
+                                         '</div>')};
+
+    $(document).ready(function () {
+      var bgiHerbAPI = "http://botsad.ru/hitem/json/";
+      var getName = 'genus';
+      var searchValue = 'rhododendron';
+      var callbackStr = '&callback=fillHerbariumRecords'
+      var url = bgiHerbAPI + '?' + getName + '=' + searchValue + callbackStr; // desired get request
+      $.ajax({
+        url: url,
+        cache: false,
+        dataType: 'jsonp',
+        processData: false,
+        complete: fillHerbariumRecords
+      });
+    });
+</script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js">
+</script>
+
+<script type="text/underscore-template" id="herbarium-template">
+       <ul id="herbarium-records">
+        <%_.forEach(herbitems, function(herbitem) { %>
+            <li>
+                <%= herbitem['id'] %>
+                <%= herbitem['genus'] %>
+                <%= herbitem['collectors'] %>
+            </li>
+        <%})%>
+        </ul>
+</script>
+{%endblock%}
