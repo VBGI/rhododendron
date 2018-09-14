@@ -6,7 +6,13 @@
     <h3 class="pb-3 mb-4 font-italic border-bottom">
     Образцы рода Rhododendron в гербарии Ботанического сада-института ДВО РАН
     </h3>
-     <div id="herb-content"></div>
+     <div id="herb-content">
+         <div class="progress" style="margin: 10px">
+              <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="herb-progress">
+                  <span>Загрузка</span>
+              </div>
+         </div>
+     </div>
  </div>
 {%endblock%}
 
@@ -17,15 +23,20 @@
 
 {%block map_js%}
  <script type="text/javascript">
+    (function startProgress() { //fake animation
+            $('#herb-progress').animate({width: "100%"}, 3000);
+                      })();
 
-    function fillHerbariumRecords(jqXHR, status){
+    function finishProgress(){
+        $('#herb-progress').css({width: "100%"});
+    }
 
-        var filledTemplate =_.template($('#herbarium-template').html(),
-                                       data['data'])
-
-        if (len(data['errors']) != 0){loadingFails(data)}
+    function fillHerbariumRecords(data){
+        finishProgress();
+        var herbTemplate =_.template($('#herbarium-template').html())
+        if (data['errors'].length != 0){loadingFails(data)}
         else {
-              $('#herb-content').html(filledTemplate);
+              $('#herb-content').html(herbTemplate({'herbitems': data.data}));
               };
     };
 
@@ -35,23 +46,17 @@
                                          '</div>')};
 
     $(document).ready(function () {
-      var bgiHerbAPI = "http://botsad.ru/hitem/json/";
-      var getName = 'genus';
-      var searchValue = 'rhododendron';
-      var callbackStr = '&callback=fillHerbariumRecords'
-      var url = bgiHerbAPI + '?' + getName + '=' + searchValue + callbackStr; // desired get request
+      var bgiHerbAPIUrl = "{%url 'herb-data' %}";
       $.ajax({
-        url: url,
-        cache: false,
-        dataType: 'jsonp',
-        processData: false,
-        complete: fillHerbariumRecords
+        url: bgiHerbAPIUrl,
+        cache: true,
+        dataType: 'json',
+        success: fillHerbariumRecords
       });
     });
 </script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js">
-</script>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 <script type="text/underscore-template" id="herbarium-template">
        <ul id="herbarium-records">
         <%_.forEach(herbitems, function(herbitem) { %>

@@ -10,5 +10,5 @@ urlpatterns = [
     path('record/<int:pk>', RecordDetail.as_view(), name='record-info'),
     path('images/<int:pk>', ListRelatedImages.as_view(), name='list-images'),
     path('page/<int:pk>', PageDetail.as_view(), name='page-info'),
-    path('herbarium/', herbarium_view),
+    path('herbarium/', herbarium_view, name='herb-data'),
 ]

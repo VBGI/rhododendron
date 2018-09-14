@@ -1,0 +1,18 @@
+
+
+ul#herbarium-records{
+list-style-type: none;
+
+
+}
+
+ul#herbarium-records li{
+width: 150px;
+min-height: 200px;
+float: left;
+padding: 10px;
+display:table-cell;
+}
+ul#herbarium-records li:hover{
+background-color: #d1e5cf;
+}

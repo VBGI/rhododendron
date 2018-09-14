@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage
-from django.conf import settings
+from django.core.cache import cache
+from .conf import settings
 from django.core import serializers
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .filters import RecordFilter
 from .models import Record, Species, Image, Page
 from django.views.generic import DetailView, ListView
+import urllib.request
+
+
 
 
 def record_list(request):
@@ -25,7 +29,17 @@ def base_view(request):
 
 
 def herbarium_view(request):
-    return render(request, 'herbarium.html')
+    if request.is_ajax():
+        pars = getattr(settings, 'RHD_BGI_HERB_SEARCH_PARAMETERS', '')
+        url = getattr(settings, 'RHD_BGI_HERB_URL', '')
+        data = cache.get('herbarium-data')
+        if data is None:
+            with urllib.request.urlopen(url + '/?' + pars) as response:
+               data = response.read()
+            cache.set('herbarium-data', data, 3600 * 24)
+        return HttpResponse(data, content_type="application/json")
+    else:
+        return render(request, 'herbarium.html')
 
 
 class RecordDetail(DetailView):
