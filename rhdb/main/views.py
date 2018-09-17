@@ -5,11 +5,10 @@ from .conf import settings
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from .filters import RecordFilter
+from django.urls import reverse
 from .models import Record, Species, Image, Page
 from django.views.generic import DetailView, ListView
 import urllib.request
-
-
 
 
 def record_list(request):
@@ -39,7 +38,10 @@ def herbarium_view(request):
             cache.set('herbarium-data', data, 3600 * 24)
         return HttpResponse(data, content_type="application/json")
     else:
-        return render(request, 'herbarium.html')
+        page = Page.objects.filter(slug=reverse('herb-data').strip('/')).first()
+        return render(request,
+                      'herbarium.html',
+                      {'page': page})
 
 
 class RecordDetail(DetailView):

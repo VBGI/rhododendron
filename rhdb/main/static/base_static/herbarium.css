@@ -2,17 +2,28 @@
 
 ul#herbarium-records{
 list-style-type: none;
-
-
 }
 
 ul#herbarium-records li{
-width: 150px;
-min-height: 200px;
+width: 200px;
+min-height: 350px;
 float: left;
 padding: 10px;
 display:table-cell;
 }
 ul#herbarium-records li:hover{
 background-color: #d1e5cf;
+border-radius: 5px;
+}
+
+ul#herbarium-records li a{
+text-decoration: none !important;
+color: black !important;
+cursor: pointer !important;
+}
+
+ul#herbarium-records li p {
+padding: 0px;
+margin: 2px 0px 2px;
+font-size: 1em;
 }

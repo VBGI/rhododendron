@@ -4,9 +4,10 @@
 {%block main%}
  <div class="col-md-12 base-main">
     <h3 class="pb-3 mb-4 font-italic border-bottom">
-    Образцы рода Rhododendron в гербарии Ботанического сада-института ДВО РАН
+    {{page.title}}
     </h3>
-     <div id="herb-content">
+    <div id="herb-preface">{{page.content|safe}}</div>
+    <div id="herb-content">
          <div class="progress" style="margin: 10px">
               <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="herb-progress">
                   <span>Загрузка</span>
@@ -33,10 +34,15 @@
 
     function fillHerbariumRecords(data){
         finishProgress();
-        var herbTemplate =_.template($('#herbarium-template').html())
+        var herbTemplate =_.template($('#herbarium-template').html());
         if (data['errors'].length != 0){loadingFails(data)}
         else {
-              $('#herb-content').html(herbTemplate({'herbitems': data.data}));
+              var images = [];
+              for (d in data.data){
+                        images.push(getImageUrl(data.data[d].images));
+                    }
+              pairedInfo = _.zip(data.data, images);
+              $('#herb-content').html(herbTemplate({'herbitems': pairedInfo}));
               };
     };
 
@@ -44,6 +50,25 @@
                  $('#herb-content').html('<div class="alert alert-danger">' +
                                          '<h4>Произошла ошибка в процессе формирования запроса к базе данных Ботанического сада-института ДВО РАН </h4>' +
                                          '</div>')};
+    function getImageUrl(s){
+    var resUrl="{%static 'images/no-herb.png' %}";
+    var strParts;
+    if (typeof s === 'string'){
+        if (s.length == 0){return resUrl}
+        strParts = s.split(',');
+        if (strParts.length != 4){return resUrl}
+        }
+    if (Array.isArray(s)) {
+        strParts = s;
+      }
+    else
+        {return resUrl}
+    for (u in strParts){
+            if (strParts[u].includes('/ts/')){
+                resUrl = strParts[u]}
+            }
+    return resUrl;
+    }
 
     $(document).ready(function () {
       var bgiHerbAPIUrl = "{%url 'herb-data' %}";
@@ -59,13 +84,16 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 <script type="text/underscore-template" id="herbarium-template">
        <ul id="herbarium-records">
-        <%_.forEach(herbitems, function(herbitem) { %>
+        <%_.forEach(herbitems, function(herbitem, index) { %>
             <li>
-                <%= herbitem['id'] %>
-                <%= herbitem['genus'] %>
-                <%= herbitem['collectors'] %>
+                <a href="http://botsad.ru/hitem/<%= herbitem[0].id %>" target="_blank">
+                    <div class="herb-image" style="text-align:center"><img width="70%" src="<%= herbitem[1] %>"></div>
+                    <p> <em> <%= herbitem[0].genus %> <%= herbitem[0].species_epithet %> </em>  <%= herbitem[0].species_authorship %> </em></p>
+                    <p><strong>ID: </strong> <%= herbitem[0].id %> </p>
+                    <p><strong>Собрали: </strong> <% if (herbitem[0].collectors.length > 0) { %> <%= herbitem[0].collectors %> <% }else { %> -- <% } %></p>
+                </a>
             </li>
-        <%})%>
+        <% })%>
         </ul>
 </script>
 {%endblock%}
