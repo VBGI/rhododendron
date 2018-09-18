@@ -6,7 +6,7 @@ from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from .filters import RecordFilter
 from django.urls import reverse
-from .models import Record, Species, Image, Page
+from .models import Record, Species, Image, Page, PhotoAlbum
 from django.views.generic import DetailView, ListView
 import urllib.request
 
@@ -42,6 +42,13 @@ def herbarium_view(request):
         return render(request,
                       'herbarium.html',
                       {'page': page})
+
+
+class AlbumView(DetailView):
+    model = PhotoAlbum
+    http_method_names = ['get', ]
+
+    # TODO: Should return html-rendered content of the album
 
 
 class RecordDetail(DetailView):

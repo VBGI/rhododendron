@@ -1,7 +1,7 @@
 from django.test import TestCase, TransactionTestCase, Client
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from .models import Species, Image, Record, Page
+from .models import Species, Image, Record, Page, PhotoAlbum
 from .filters import RecordFilter
 from django.urls import reverse
 
@@ -16,17 +16,18 @@ record_allowed_attributes = ('species', 'updated', 'created', 'region',
                              'district', 'content', 'latitude', 'longitude')
 
 image_allowed_attributes = ('description', 'title', 'created', 'updated',
-                             'src', 'record', 'order', 'category',
-                            'category_slug', 'category_name')
+                             'src', 'record', 'order', 'album')
 
 page_allowed_attrs = ('public','content', 'title', 'order')
 
+
+album_allowed_attrs = ('child', 'name')
 # -------------------------------------
 
 def auto_attr_helper(model_name, *args):
     '''Autotest class-decorator
 
-    Creates tests and check for attribute existence
+    Creates tests and checks attribute existence
     '''
 
     def wrapped(arg):
@@ -54,6 +55,13 @@ class BasicSpeciesTests(metaclass=auto_attr_helper('species',
 
     def test_species_name(self):
         self.assertEqual(self.species.name, 'Test')
+
+
+class BasicPhotoAlbumTests(metaclass=auto_attr_helper('album',
+                                                  *album_allowed_attrs)):
+    @classmethod
+    def setUpTestData(cls):
+        cls.album = PhotoAlbum.objects.create()
 
 
 class BasicImagesTests(metaclass=auto_attr_helper('image',
@@ -218,6 +226,32 @@ class ImagesTest(TestCase):
         self.im1.src.delete()
         self.im2.src.delete()
         self.im3.src.delete()
+
+
+class PhotoAlbumTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.child = PhotoAlbum.objects.create(name='Child', child=None)
+        cls.album = PhotoAlbum.objects.create(name='Main', child=cls.child)
+        cls.sp1 = Image.objects.create(album=cls.album)
+        cls.sp2 = Image.objects.create(album=cls.album)
+        cls.sp3 = Image.objects.create(album=cls.child)
+        cls.sp4 = Image.objects.create(album=cls.child)
+
+    def test_get_images(self):
+        res = self.child.get_images()
+        self.assertIn(self.sp3, res)
+        self.assertIn(self.sp4, res)
+        self.assertNotIn(self.sp1, res)
+        self.assertNotIn(self.sp2, res)
+
+    def test_get_children(self):
+        res = self.album.get_all_images()
+        self.assertIn(self.sp1, res)
+        self.assertIn(self.sp2, res)
+        self.assertIn(self.sp3, res)
+        self.assertIn(self.sp4, res)
 
 
 # --------------- Species info tests

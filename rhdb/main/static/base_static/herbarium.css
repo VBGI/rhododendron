@@ -6,14 +6,16 @@ list-style-type: none;
 
 ul#herbarium-records li{
 width: 200px;
-min-height: 350px;
+min-height: 400px;
 float: left;
 padding: 10px;
 display:table-cell;
+
 }
 ul#herbarium-records li:hover{
 background-color: #d1e5cf;
 border-radius: 5px;
+box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
 }
 
 ul#herbarium-records li a{

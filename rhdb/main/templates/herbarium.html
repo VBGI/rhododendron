@@ -91,6 +91,7 @@
                     <p> <em> <%= herbitem[0].genus %> <%= herbitem[0].species_epithet %> </em>  <%= herbitem[0].species_authorship %> </em></p>
                     <p><strong>ID: </strong> <%= herbitem[0].id %> </p>
                     <p><strong>Собрали: </strong> <% if (herbitem[0].collectors.length > 0) { %> <%= herbitem[0].collectors %> <% }else { %> -- <% } %></p>
+                    <% if (herbitem[0].collection_started.length > 0) { %> <p><small><strong>Дата сбора: </strong> <%= herbitem[0].collection_started %> </small></p>  <% } %>
                 </a>
             </li>
         <% })%>

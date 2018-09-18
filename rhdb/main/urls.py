@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (record_list, RecordDetail, ListRelatedImages,
                    PageDetail, base_view, herbarium_view)
-
+from .conf import settings
 
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('images/<int:pk>', ListRelatedImages.as_view(), name='list-images'),
     path('page/<int:pk>', PageDetail.as_view(), name='page-info'),
     path('herbarium/', herbarium_view, name='herb-data'),
+    path(settings.RHD_ALBUM_URL + '<slug:name>', album_view, name='')
 ]

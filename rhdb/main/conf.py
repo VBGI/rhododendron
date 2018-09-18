@@ -7,6 +7,7 @@ class RhododendronAppConf(AppConf):
     PAGINATION_SIZE = 30
     BGI_HERB_URL = 'http://botsad.ru/hitem/json'
     BGI_HERB_SEARCH_PARAMETERS = 'genus=rhododendron'
+    ALBUM_URL = '/jsonalbum/'
 
     class Meta:
         prefix = 'rhd'
