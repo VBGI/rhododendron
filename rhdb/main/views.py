@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, EmptyPage
 from django.core.cache import cache
 from .conf import settings
 from django.core import serializers
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from .filters import RecordFilter
 from django.urls import reverse
 from .models import Record, Species, Image, Page, PhotoAlbum
@@ -22,6 +22,7 @@ def record_list(request):
         objects = paginator.get_page(1)
     return render(request, 'record-list.html',
                   {'objects': objects})
+
 
 def base_view(request):
     return render(request, 'base.html')
@@ -47,8 +48,23 @@ def herbarium_view(request):
 class AlbumView(DetailView):
     model = PhotoAlbum
     http_method_names = ['get', ]
+    template_name = 'show-album.html'
+    content_type = 'text/html; charset=utf-8'
+    context_object_name = 'album'
 
-    # TODO: Should return html-rendered content of the album
+    def get_context_data(self, **kwargs):
+        dct = super().get_context_data(**kwargs)
+        if self.object:
+            dct.update({'images': self.object.get_images()})
+        return dct
+
+    def get_object(self, *args, **kwargs):
+        try:
+            obj = super().get_object(*args, **kwargs)
+            self.object = obj
+        except Http404:
+            self.object = None
+        return self.object
 
 
 class RecordDetail(DetailView):

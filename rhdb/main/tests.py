@@ -21,7 +21,7 @@ image_allowed_attributes = ('description', 'title', 'created', 'updated',
 page_allowed_attrs = ('public','content', 'title', 'order')
 
 
-album_allowed_attrs = ('child', 'name')
+album_allowed_attrs = ('child', 'name', 'slug')
 # -------------------------------------
 
 def auto_attr_helper(model_name, *args):
@@ -232,12 +232,13 @@ class PhotoAlbumTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.child = PhotoAlbum.objects.create(name='Child', child=None)
-        cls.album = PhotoAlbum.objects.create(name='Main', child=cls.child)
-        cls.sp1 = Image.objects.create(album=cls.album)
-        cls.sp2 = Image.objects.create(album=cls.album)
-        cls.sp3 = Image.objects.create(album=cls.child)
-        cls.sp4 = Image.objects.create(album=cls.child)
+        cls.child = PhotoAlbum.objects.create(name='Child', child=None, slug='child')
+        cls.album = PhotoAlbum.objects.create(name='Main', child=cls.child, slug='main')
+        cls.sp1 = Image.objects.create(album=cls.album, title='main_image1')
+        cls.sp2 = Image.objects.create(album=cls.album, title='main_image2')
+        cls.sp3 = Image.objects.create(album=cls.child, title='child_image3')
+        cls.sp4 = Image.objects.create(album=cls.child, title='child_image4')
+        cls.client = Client()
 
     def test_get_images(self):
         res = self.child.get_images()
@@ -252,6 +253,29 @@ class PhotoAlbumTests(TestCase):
         self.assertIn(self.sp2, res)
         self.assertIn(self.sp3, res)
         self.assertIn(self.sp4, res)
+
+    def test_show_child_album(self):
+        response = self.client.get(reverse('show-album', kwargs={'slug': 'child'}))
+        self.assertContains(response, 'child_image3')
+        self.assertContains(response, 'child_image4')
+        self.assertNotContains(response, 'child_image1')
+        self.assertNotContains(response, 'child_image2')
+
+    def test_show_main_images(self):
+        response = self.client.get(reverse('show-album', kwargs={'slug': 'main'}))
+        self.assertContains(response, 'main_image1')
+        self.assertContains(response, 'main_image2')
+        self.assertNotContains(response, 'child_image3')
+        self.assertNotContains(response, 'child_image4')
+
+    def test_show_no_images(self):
+        response = self.client.get(reverse('show-album', kwargs={'slug': 'abracadabra'}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'нет изображений')
+
+    def test_content_type(self):
+        response = self.client.get(reverse('show-album', kwargs={'slug': 'abracadabra'}))
+        self.assertTrue('html' in response.get('Content-Type', ''))
 
 
 # --------------- Species info tests

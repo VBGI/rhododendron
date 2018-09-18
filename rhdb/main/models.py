@@ -1,7 +1,9 @@
 # coding: utf-8
 from django.db import models
 from ckeditor.fields import RichTextField
+from .conf import settings
 from django.urls import reverse
+import os
 
 class UpdaterMixin:
     created = models.DateTimeField(auto_now_add=True)
@@ -61,6 +63,7 @@ class PhotoAlbum(models.Model, UpdaterMixin):
     child = models.ForeignKey('self', related_name='parent', null=True, blank=True,
                                  on_delete=models.CASCADE)
     name = models.CharField(default='', blank=True, max_length=300)
+    slug = models.CharField(default='', blank=False, max_length=20)
 
     def get_children(self):
         """Gets all child albums for the current one"""
@@ -77,7 +80,7 @@ class PhotoAlbum(models.Model, UpdaterMixin):
     def get_images(self):
         """Gets all images in the current album"""
 
-        return Image.objects.filter(album=self)
+        return Image.objects.filter(album=self).order_by('order')
 
     def get_all_images(self):
         """Gets all images in the current album and its descendants"""
@@ -93,7 +96,8 @@ class PhotoAlbum(models.Model, UpdaterMixin):
 
 class Image(models.Model, UpdaterMixin):
     order = models.IntegerField(default=0, blank=True, verbose_name='порядок')
-    src = models.ImageField(verbose_name='изображение', blank=False, null=True)
+    src = models.ImageField(verbose_name='изображение', blank=False, null=True,
+                            upload_to='images/%Y/%m/%d/')
     record = models.ForeignKey(Record, null=True, blank=True,
                                verbose_name='запись', on_delete=models.CASCADE)
     title = models.CharField(default='', blank=True, verbose_name='название',
@@ -103,6 +107,30 @@ class Image(models.Model, UpdaterMixin):
 
     album = models.ForeignKey('PhotoAlbum', null=True, blank=True,
                               verbose_name='альбом', on_delete=models.CASCADE)
+    @property
+    def image_name(self):
+        if self.src:
+            return os.path.abspath(self.src.path)
+        else:
+            return ''
+
+    @property
+    def image_path(self):
+        if self.src:
+            s = self.src.path
+            s.replace(self.image_name, '')
+            return s
+        else:
+            return ''
+
+
+    @property
+    def thumbnail_url(self):
+        if self.src:
+            return os.path.join(self.image_path, settings.RHD_THUMBNAIL_DIR, self.image_name)
+        else:
+            return ''
+
 
     def __str__(self):
         return self.title if self.title else self.description if self.description else self.pk
@@ -137,8 +165,3 @@ class Page(models.Model, UpdaterMixin):
             return reverse('base-view') + self.slug
         else:
             return reverse('page-info', kwargs={'pk': self.pk})
-
-
-
-
-# TODO:  Image post save and post delete signals that create thumbnails are needed....

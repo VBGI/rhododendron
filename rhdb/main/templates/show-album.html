@@ -1,0 +1,10 @@
+{%if images%}
+<ul>
+    <h2>{{album.name}}</h2>
+    {%for image in images%}
+    <li>{{image.title}}</li>
+    {%endfor%}
+</ul>
+{%else%}
+В данном альбоме нет изображений
+{%endif%}
