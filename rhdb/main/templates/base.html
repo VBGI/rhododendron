@@ -46,7 +46,8 @@
               <ul id="random-images">
                   {%for image in random_images%}
                   <li>
-                      <a href="img.record.get_absolute_url"><img src="img.thumbnail_url"/>
+                      <a href="{{image.record.get_absolute_url}}">
+                          <img src="{{image.get_thumbnail_url}}"/>
                       </a>
                   </li>
                   {%endfor%}

@@ -6,4 +6,5 @@
 *.db
 .idea
 __pycache__
-
+/media
+*.log

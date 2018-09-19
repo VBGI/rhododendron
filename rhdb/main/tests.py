@@ -1,10 +1,10 @@
 from django.test import TestCase, TransactionTestCase, Client
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from unittest import skipIf
 from .models import Species, Image, Record, Page, PhotoAlbum
 from .filters import RecordFilter
 from django.urls import reverse
-
 
 # ------- test constants --------------
 
@@ -21,7 +21,7 @@ image_allowed_attributes = ('description', 'title', 'created', 'updated',
 page_allowed_attrs = ('public','content', 'title', 'order')
 
 
-album_allowed_attrs = ('child', 'name', 'slug')
+album_allowed_attrs = ('parent', 'name', 'slug')
 # -------------------------------------
 
 def auto_attr_helper(model_name, *args):
@@ -228,17 +228,30 @@ class ImagesTest(TestCase):
         self.im3.src.delete()
 
 
-class PhotoAlbumTests(TestCase):
+
+class PhotoAlbumTests(StaticLiveServerTestCase):
+    port = 8081
 
     @classmethod
-    def setUpTestData(cls):
-        cls.child = PhotoAlbum.objects.create(name='Child', child=None, slug='child')
-        cls.album = PhotoAlbum.objects.create(name='Main', child=cls.child, slug='main')
-        cls.sp1 = Image.objects.create(album=cls.album, title='main_image1')
-        cls.sp2 = Image.objects.create(album=cls.album, title='main_image2')
-        cls.sp3 = Image.objects.create(album=cls.child, title='child_image3')
-        cls.sp4 = Image.objects.create(album=cls.child, title='child_image4')
-        cls.client = Client()
+    def setUpClass(cls):
+        super().setUpClass()
+        try:
+            from selenium import webdriver
+            from selenium.webdriver.firefox.options import Options
+            options = Options()
+            options.add_argument("--headless")
+            cls.firefox_driver = webdriver.Firefox(firefox_options=options)
+        except:
+            cls.firefox_driver = None
+
+    def setUp(self):
+        self.album = PhotoAlbum.objects.create(name='Main', parent=None, slug='main')
+        self.child = PhotoAlbum.objects.create(name='Child', parent=self.album,
+                                               slug='child')
+        self.sp1 = Image.objects.create(album=self.album, title='main_image1')
+        self.sp2 = Image.objects.create(album=self.album, title='main_image2')
+        self.sp3 = Image.objects.create(album=self.child, title='child_image3')
+        self.sp4 = Image.objects.create(album=self.child, title='child_image4')
 
     def test_get_images(self):
         res = self.child.get_images()
@@ -275,7 +288,26 @@ class PhotoAlbumTests(TestCase):
 
     def test_content_type(self):
         response = self.client.get(reverse('show-album', kwargs={'slug': 'abracadabra'}))
-        self.assertTrue('html' in response.get('Content-Type', ''))
+        self.assertTrue('text' in response.get('Content-Type', ''))
+
+    def test_embed_album(self):
+        if self.firefox_driver:
+            page = Page.objects.create(title='test title', public=True,
+                                       content='<div class="photoalbum-main"></div>')
+            url = self.live_server_url + reverse('page-info', kwargs={'pk': page.pk})
+            self.firefox_driver.get(url)
+            self.firefox_driver.implicitly_wait(5) # wait 5 seconds
+            html = self.firefox_driver.execute_script("return document.documentElement.outerHTML")
+            self.assertIn('<div class="photoalbum-main">', html)
+            self.assertIn(self.sp1.title, html)
+            self.assertIn(self.sp2.title, html)
+        else:
+            print("This test was skipped. Firefox driver wasn't found.")
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.firefox_driver:
+            cls.firefox_driver.quit()
 
 
 # --------------- Species info tests
