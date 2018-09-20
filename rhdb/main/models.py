@@ -26,19 +26,24 @@ class Species(UpdaterMixin):
         verbose_name = 'Вид'
         verbose_name_plural = 'Виды'
         ordering = ('pk',)
-        
-
 
 
 class Record(UpdaterMixin):
     species = models.ForeignKey(Species, null=True, blank=False,
                                 verbose_name='вид', on_delete=models.CASCADE)
-    content = RichTextField(blank=True, default='',
-                            verbose_name='содержимое страницы')
-    region = models.CharField(blank=True, default='', verbose_name='регион',
-                              max_length=70)
+    # instead of content attribute.
+    num = models.CharField(max_length=10, blank=True, default='', verbose_name='номер листа')
+    source = models.CharField(max_length=50, blank=True, default='', verbose_name='место хранения листа')
+    place = models.CharField(max_length=500, blank=True, default='', verbose_name='место сбора')
+    forest_type = models.CharField(max_length=200, blank=True, default='', verbose_name='тип леса')
+    soil_type = models.CharField(max_length=200, blank=True, default='', verbose_name='тип почв')
+    collection_date = models.DateField(blank=True, null=True, verbose_name='дата сбора')
+    collectors = models.CharField(default='', blank=True, max_length=200, verbose_name='собрал(и)')
+
     district = models.CharField(blank=True, default='', verbose_name='район',
                                 max_length=70)
+    region = models.CharField(blank=True, default='', verbose_name='регион',
+                              max_length=70)
     latitude = models.FloatField(null=True, verbose_name='широта',
                                  blank=True, default=0)
     longitude = models.FloatField(null=True, verbose_name='долгота',
