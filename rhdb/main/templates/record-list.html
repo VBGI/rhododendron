@@ -4,8 +4,8 @@
     <h3 class="pb-3 mb-4 font-italic border-bottom">Список записей</h3>
      <div class="pagination">
         <span class="step-links">
+            <a href="?page=1">&laquo; Первая</a>
             {% if objects.has_previous %}
-                <a href="?page=1">&laquo; first</a>
                 <a href="?page={{ objects.previous_page_number }}">Предыдущая</a>
             {% endif %}
             <span class="current">
@@ -13,27 +13,42 @@
             </span>
             {% if objects.has_next %}
                 <a href="?page={{ objects.next_page_number }}">Следующая</a>
-                <a href="?page={{ objects.paginator.num_pages }}">Предыдущая &raquo;</a>
             {% endif %}
+                <a href="?page={{ objects.paginator.num_pages }}">Последняя &raquo;</a>
         </span>
      </div>
      <div class="base-post">
          {%if objects%}
          <ul>
             {%for obj in objects%}
-            <li>
-                <a href="{%url 'record-info' obj.pk %}">{{obj.species.name}}</a>
+            <li {%if obj.place%} title="Место сбора: {{obj.place}}" {%endif%}>
+                {{ obj.pk }}.
+                <a href="{%url 'record-info' obj.pk %}" > {{obj.species.name}}</a>
                  {%if obj.district or obj.region%} ({{obj.district}} {{obj.region}}){%endif%}
-                <i>Последнее изменение: {{obj.updated}}</i>
             </li>
              {%endfor%}
          </ul>
+
+     <div class="pagination">
+        <span class="step-links">
+            <a href="?page=1">&laquo; Первая</a>
+            {% if objects.has_previous %}
+                <a href="?page={{ objects.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+            <span class="current">
+                Страница {{ objects.number }} из {{ objects.paginator.num_pages }}.
+            </span>
+            {% if objects.has_next %}
+                <a href="?page={{ objects.next_page_number }}">Следующая</a>
+            {% endif %}
+                <a href="?page={{ objects.paginator.num_pages }}">Последняя &raquo;</a>
+        </span>
+     </div>
          {%else%}
          <div class="alert alert-warning">
             <strong>Список пуст</strong>
          </div>
          {%endif%}
-     {{object.content|safe}}
      </div>
  </div>
 

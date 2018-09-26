@@ -4,18 +4,57 @@
     <h3 class="pb-3 mb-4 font-italic border-bottom">{{object.species.name}}</h3>
      <div class="hidden">{{object.species.info|safe}}</div>
      <div class="base-post">
-        {%if object.latitude and object.longitude%}
+        {%if object.num %}
+         <p>Инвентарный номер образца: {{object.num}}</p>
+        {%endif%}
+
+        {%if object.latitude and object.longitude %}
          <h5>Географические координаты: </h5>
          <p>Широта: {{object.latitude}}</p>
          <p>Долгота: {{object.longitude}}</p>
         {%endif%}
-         {%if object.region%}
+
+         {%if object.region %}
           <p>Регион: {{object.region}}</p>
          {%endif%}
-         {%if object.district%}
+
+         {%if object.district %}
           <p>Район: {{object.district}}</p>
          {%endif%}
-        {{object.content|safe}}
+
+         {%if object.source %}
+         <p>Происхождение образца: {{object.source}}</p>
+         {%endif%}
+
+         {%if object.place or object.forest_type or object.soil_type%}
+         <h5>Характеристика места сбора: </h5>
+         {%endif%}
+
+         {%if object.place %}
+          <p>Место сбора: {{object.forest_type}}</p>
+         {%endif%}
+
+         {%if object.forest_type %}
+         <p>Тип леса: {{object.forest_type}}</p>
+         {%endif%}
+
+         {%if object.soil_type %}
+         <p>Тип почв: {{object.forest_type}}</p>
+         {%endif%}
+
+         {%if object.collectors %}
+         <p>Собрал(и): {{object.collectors}}</p>
+         {%endif%}
+
+         {%if object.collection_date %}
+         <p>Дата сбора: {{object.collection_date}}</p>
+         {%endif%}
+
+         {%if object.content %}
+         <p>Общая информация: </p>
+         {{object.content|safe}}
+         {%endif%}
+
      </div>
  </div>
 {%endblock%}

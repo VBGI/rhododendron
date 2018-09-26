@@ -23,3 +23,16 @@ font-weight: bold;
 margin-top: 3px;
 margin-bottom: -2px;
 }
+
+.pagination {
+text-align: center;
+display: block;
+}
+
+.base-post ul li {
+list-style-type: none;
+}
+
+.base-post ul li:hover {
+background-color: #d1e5cf;
+}

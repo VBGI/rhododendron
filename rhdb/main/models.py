@@ -37,9 +37,9 @@ class Record(UpdaterMixin):
     place = models.CharField(max_length=500, blank=True, default='', verbose_name='место сбора')
     forest_type = models.CharField(max_length=200, blank=True, default='', verbose_name='тип леса')
     soil_type = models.CharField(max_length=200, blank=True, default='', verbose_name='тип почв')
-    collection_date = models.DateField(blank=True, null=True, verbose_name='дата сбора')
+    collection_date = models.CharField(max_length=20, default='', blank=True, verbose_name='дата сбора')
     collectors = models.CharField(default='', blank=True, max_length=200, verbose_name='собрал(и)')
-
+    content = models.TextField(blank=True, default=True, verbose_name='содержание')
     district = models.CharField(blank=True, default='', verbose_name='район',
                                 max_length=70)
     region = models.CharField(blank=True, default='', verbose_name='регион',
