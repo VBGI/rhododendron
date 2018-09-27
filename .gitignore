@@ -1,9 +1,7 @@
 *.py[oc]
 *.*~
-*.db
 .project
 .pydevproject
-*.db
 .idea
 __pycache__
 /media
