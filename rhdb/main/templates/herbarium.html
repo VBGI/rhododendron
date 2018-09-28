@@ -84,6 +84,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 <script type="text/underscore-template" id="herbarium-template">
        <ul id="herbarium-records">
+       <div style="text-align: right"> Загружено гербарных записей: <%= herbitems.length %>. </div>
         <%_.forEach(herbitems, function(herbitem, index) { %>
             <li>
                 <a href="http://botsad.ru/hitem/<%= herbitem[0].id %>" target="_blank">

@@ -45,7 +45,8 @@ def herbarium_view(request):
         page = Page.objects.filter(slug=reverse('herb-data').strip('/')).first()
         return render(request,
                       'herbarium.html',
-                      {'page': page})
+                      {'page': page}
+                      )
 
 
 class AlbumView(DetailView):
