@@ -1,9 +1,15 @@
 {%extends 'base.html' %}
+{%load static %}
 {%block main%}
  <div class="col-md-12 base-main">
     <h3 class="pb-3 mb-4 font-italic border-bottom">{{object.species.name}}</h3>
-     <div class="hidden">{{object.species.info|safe}}</div>
+
+    <a class="show-info" href="#">Показать инофрмацию о виде</a>
+    <div class="hidden" style="display: none;">{{object.species.info|safe}}</div>
+
      <div class="base-post">
+      <h4 style="text-align: center">Информация о сборе</h4>
+
         {%if object.num %}
          <p>Инвентарный номер образца: {{object.num}}</p>
         {%endif%}
@@ -12,6 +18,11 @@
          <h5>Географические координаты: </h5>
          <p>Широта: {{object.latitude}}</p>
          <p>Долгота: {{object.longitude}}</p>
+         <hr/>
+         <div id="record-map"></div>
+         <hr/>
+
+
         {%endif%}
 
          {%if object.region %}
@@ -54,11 +65,28 @@
          <p>Общая информация: </p>
          {{object.content|safe}}
          {%endif%}
-
      </div>
  </div>
 {%endblock%}
 
 {%block map_js%}
+<script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+<script>
+$(document).ready(function(){
+$(".show-info").click(function(){
+if (!$(".hidden").is(":visible")) {
+$(".show-info").html('Скрыть информацию о виде')}
+else {$(".show-info").html('Показать информацию о виде</p>')}
+$(".hidden").toggle({'duration': 1000});
+})})
 
+var myMap = new ymaps.Map('map', {
+            center: [55.751574, 37.573856],
+            zoom: 9
+        }, {
+            searchControlProvider: 'yandex#search'
+        }),
+
+
+</script>
 {%endblock%}

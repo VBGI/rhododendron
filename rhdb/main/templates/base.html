@@ -9,6 +9,7 @@
     <link rel="icon" href="https://getbootstrap.com/favicon.ico"> <!-- TODO: Customize icon! -->
     <title>Род Rhododendron: распространение и видовое разнообразие на Дальнем Востоке России</title>
     {%block css-block %}
+
     <link href="{% static 'base_static/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'base_static/css.css' %}" rel="stylesheet">
     <link href="{% static 'base_static/base.css' %}" rel="stylesheet">
@@ -90,17 +91,10 @@
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="{%static 'base_static/popper.js' %}"></script>
     <script src="{%static 'base_static/bootstrap.js' %}"></script>
-    <script src="{%static 'base_static/holder.js' %}"></script>
     <script src="{%static 'base_static/renderer.js' %}"></script>
     <script>
       var albumUrl = "/{{album_url}}";
-      Holder.addTheme('thumb', {
-        bg: '#55595c',
-        fg: '#eceeef',
-        text: 'Thumbnail'
-      });
     </script>
     </div>
   {%block map_js%}
