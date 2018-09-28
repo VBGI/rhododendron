@@ -1,0 +1,15 @@
+<div class="pagination">
+        <span class="step-links">
+            <a href="{{querystring}}&page=1">&laquo; Первая</a>
+            {% if objects.has_previous %}
+                <a href="{{querystring}}&page={{ objects.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+            <span class="current">
+                Страница {{ objects.number }} из {{ objects.paginator.num_pages }}.
+            </span>
+            {% if objects.has_next %}
+                <a href="{{querystring}}&page={{ objects.next_page_number }}">Следующая</a>
+            {% endif %}
+                <a href="{{querystring}}&page={{ objects.paginator.num_pages }}">Последняя &raquo;</a>
+        </span>
+</div>

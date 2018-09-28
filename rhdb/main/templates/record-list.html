@@ -2,48 +2,24 @@
 {%block main%}
  <div class="col-md-8 base-main">
     <h3 class="pb-3 mb-4 font-italic border-bottom">Список записей</h3>
-     <div class="pagination">
-        <span class="step-links">
-            <a href="?page=1">&laquo; Первая</a>
-            {% if objects.has_previous %}
-                <a href="?page={{ objects.previous_page_number }}">Предыдущая</a>
-            {% endif %}
-            <span class="current">
-                Страница {{ objects.number }} из {{ objects.paginator.num_pages }}.
-            </span>
-            {% if objects.has_next %}
-                <a href="?page={{ objects.next_page_number }}">Следующая</a>
-            {% endif %}
-                <a href="?page={{ objects.paginator.num_pages }}">Последняя &raquo;</a>
-        </span>
-     </div>
+     <div style="text-align: right">Всего: {{total}} записей.</div>
+
+     {%include "paginator.html" %}
+
      <div class="base-post">
          {%if objects%}
          <ul>
             {%for obj in objects%}
             <li {%if obj.place%} title="Место сбора: {{obj.place}}" {%endif%}>
-                {{ obj.pk }}.
+                {{ obj.pk|add:"1" }}.
                 <a href="{%url 'record-info' obj.pk %}" > {{obj.species.name}}</a>
                  {%if obj.district or obj.region%} ({{obj.district}} {{obj.region}}){%endif%}
             </li>
              {%endfor%}
          </ul>
 
-     <div class="pagination">
-        <span class="step-links">
-            <a href="?page=1">&laquo; Первая</a>
-            {% if objects.has_previous %}
-                <a href="?page={{ objects.previous_page_number }}">Предыдущая</a>
-            {% endif %}
-            <span class="current">
-                Страница {{ objects.number }} из {{ objects.paginator.num_pages }}.
-            </span>
-            {% if objects.has_next %}
-                <a href="?page={{ objects.next_page_number }}">Следующая</a>
-            {% endif %}
-                <a href="?page={{ objects.paginator.num_pages }}">Последняя &raquo;</a>
-        </span>
-     </div>
+         {%include "paginator.html" %}
+
          {%else%}
          <div class="alert alert-warning">
             <strong>Список пуст</strong>

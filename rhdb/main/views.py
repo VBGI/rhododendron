@@ -13,6 +13,7 @@ import urllib.request
 
 def record_list(request):
     filtered_objects = RecordFilter(request.GET, queryset=Record.objects.all())
+    all_filter_names = {x for x in filtered_objects.get_filters()}
     page = request.GET.get('page', 1)
     paginator = Paginator(filtered_objects.qs,
                           getattr(settings, 'RHD_PAGINATION_SIZE', 50))
@@ -21,7 +22,9 @@ def record_list(request):
     except EmptyPage:
         objects = paginator.get_page(1)
     return render(request, 'record-list.html',
-                  {'objects': objects})
+                  {'objects': objects,
+                   'querystring': '?' + '&'.join(('{}={}'.format(x, y) for x, y in request.GET.items() if x in all_filter_names))
+                   })
 
 
 def base_view(request):
