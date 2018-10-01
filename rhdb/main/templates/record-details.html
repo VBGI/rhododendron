@@ -11,54 +11,50 @@
       <h4 style="text-align: center">Информация о сборе</h4>
 
         {%if object.num %}
-         <p>Инвентарный номер образца: {{object.num}}</p>
+         <p><strong> Инвентарный номер образца:</strong>  {{object.num}}</p>
         {%endif%}
 
         {%if object.latitude and object.longitude %}
          <h5>Географические координаты: </h5>
-         <p>Широта: {{object.latitude}}</p>
-         <p>Долгота: {{object.longitude}}</p>
+         <p><strong> Широта:</strong>  {{object.latitude}}</p>
+         <p><strong> Долгота:</strong>  {{object.longitude}}</p>
          <hr/>
-         <div id="record-map"></div>
+         <div id="record-map" style="width: 100%; min-height: 300px"></div>
          <hr/>
 
 
         {%endif%}
 
          {%if object.region %}
-          <p>Регион: {{object.region}}</p>
+          <p><strong>Регион:</strong>  {{object.region|capfirst}}</p>
          {%endif%}
 
          {%if object.district %}
-          <p>Район: {{object.district}}</p>
+          <p><strong>Район:</strong>  {{object.district|capfirst}}</p>
          {%endif%}
 
          {%if object.source %}
-         <p>Происхождение образца: {{object.source}}</p>
-         {%endif%}
-
-         {%if object.place or object.forest_type or object.soil_type%}
-         <h5>Характеристика места сбора: </h5>
+         <p><strong> Происхождение образца:</strong>  {{object.source}}</p>
          {%endif%}
 
          {%if object.place %}
-          <p>Место сбора: {{object.forest_type}}</p>
+          <p><strong> Место сбора:</strong>  {{object.place|capfirst}}</p>
          {%endif%}
 
          {%if object.forest_type %}
-         <p>Тип леса: {{object.forest_type}}</p>
+         <p><strong>Тип леса:</strong>  {{object.forest_type|capfirst}}</p>
          {%endif%}
 
          {%if object.soil_type %}
-         <p>Тип почв: {{object.forest_type}}</p>
+         <p><strong>Дополнительно:</strong> {{object.soil_type|capfirst}}</p>
          {%endif%}
 
          {%if object.collectors %}
-         <p>Собрал(и): {{object.collectors}}</p>
+         <p>Собрал(и): {{object.collectors|capfirst}}</p>
          {%endif%}
 
          {%if object.collection_date %}
-         <p>Дата сбора: {{object.collection_date}}</p>
+         <p><strong> сбора:</strong>  {{object.collection_date}}</p>
          {%endif%}
 
          {%if object.content %}
@@ -80,13 +76,35 @@ else {$(".show-info").html('Показать информацию о виде</p
 $(".hidden").toggle({'duration': 1000});
 })})
 
-var myMap = new ymaps.Map('map', {
-            center: [55.751574, 37.573856],
-            zoom: 9
-        }, {
-            searchControlProvider: 'yandex#search'
+function init () {
+    var myMap = new ymaps.Map('record-map', {
+            center: [{{object.latitude}}, {{object.longitude}}],
+            zoom: 8,
+            controls: []
         }),
+        objectManager = new ymaps.ObjectManager({
+            clusterize: true,
+            clusterDisableClickZoom: true
+        });
+    myMap.geoObjects.add(objectManager);
+    myMap.controls.add(new ymaps.control.ZoomControl());
+    myMap.controls.add('typeSelector');
+
+    recordGeoObject = new ymaps.GeoObject({
+        geometry: {
+            type: "Point",
+            coordinates: [{{object.latitude}}, {{object.longitude}}]
+       },
+        properties: {
+            hintContent: "{{object.species.name}}:({{object.latitude}}, {{object.longitude}})"
+        }
+    });
+
+    myMap.geoObjects.add(recordGeoObject);
 
 
+    }
+
+ymaps.ready(init);
 </script>
 {%endblock%}

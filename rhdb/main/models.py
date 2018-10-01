@@ -50,9 +50,7 @@ class Record(UpdaterMixin):
                                   blank=True, default=0)
 
     def __str__(self):
-        #FIXME: ugly string...
-        return ((self.species.name if self.species else ' ') +
-                self.region + ' ' + self.district).strip()
+        return ' | '.join([self.species.name if self.species else ' ',self.region, self.district])
 
     def get_absolute_url(self):
         return reverse('record-info', kwargs={'pk': self.pk})
