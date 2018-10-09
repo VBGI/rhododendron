@@ -94,7 +94,8 @@ CACHES = {
 CKEDITOR_CONFIGS = {
     "default": {
         "removePlugins": "stylesheetparser",
-        "extraAllowedContent" : 'div(*)'
+        "extraAllowedContent" : 'div(*)',
+        'toolbar': 'full'
     }
 }
 

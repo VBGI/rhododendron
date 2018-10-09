@@ -37,3 +37,27 @@ list-style-type: none;
 .base-post ul li:hover {
 background-color: #d1e5cf;
 }
+
+
+
+@media only screen and (min-width: 768px) {
+
+.title-image{
+background-image: url('/static/images/base.png');
+width: 100%;
+}
+
+}
+
+
+
+.title-smooth {
+width: 30%;
+float: right;
+background-color: rgba(0,0,0,0.35);
+}
+
+
+
+
+
