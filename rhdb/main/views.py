@@ -21,10 +21,15 @@ def record_list(request):
         objects = paginator.get_page(page)
     except EmptyPage:
         objects = paginator.get_page(1)
-    return render(request, 'record-list.html',
-                  {'objects': objects,
-                   'querystring': '?' + '&'.join(('{}={}'.format(x, y) for x, y in request.GET.items() if x in all_filter_names))
-                   })
+    if request.is_ajax():
+        data = serializers.serialize("json", objects)
+        return JsonResponse(data, status=200, safe=False)
+    else:
+        return render(request, 'record-list.html',
+                      {'objects': objects,
+                      'querystring': '?' + '&'.join(('{}={}'.format(x, y) for x, y in request.GET.items() if x in all_filter_names))
+                       }
+                      )
 
 
 def base_view(request):

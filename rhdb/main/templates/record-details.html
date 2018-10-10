@@ -16,8 +16,7 @@
 
         {%if object.latitude and object.longitude %}
          <h5>Географические координаты: </h5>
-         <p><strong> Широта:</strong>  {{object.latitude}}</p>
-         <p><strong> Долгота:</strong>  {{object.longitude}}</p>
+         <p><strong> Широта:</strong>  {{object.latitude}}&deg;N; <strong> Долгота:</strong>  {{object.longitude}}&deg;E</p>
          <hr/>
          <div id="record-map" style="width: 100%; min-height: 300px"></div>
          <hr/>
@@ -50,11 +49,11 @@
          {%endif%}
 
          {%if object.collectors %}
-         <p>Собрал(и): {{object.collectors|capfirst}}</p>
+         <p><strong>Собрал(и):</strong> {{object.collectors|capfirst}}</p>
          {%endif%}
 
          {%if object.collection_date %}
-         <p><strong> сбора:</strong>  {{object.collection_date}}</p>
+         <p><strong>Дата сбора:</strong>  {{object.collection_date}}</p>
          {%endif%}
 
          {%if object.content %}
