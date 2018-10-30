@@ -9,6 +9,7 @@ class RhododendronAppConf(AppConf):
     BGI_HERB_SEARCH_PARAMETERS = 'genus=rhododendron'
     ALBUM_URL = 'jsonalbum/'
     THUMBNAIL_DIR = 'thumbs'
-
+    THUMBNAIL_W = 100
+    THUMBNAIL_H = 200
     class Meta:
         prefix = 'rhd'

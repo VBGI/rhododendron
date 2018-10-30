@@ -60,6 +60,19 @@
          <p>Общая информация: </p>
          {{object.content|safe}}
          {%endif%}
+
+         {% if object.image_set %}
+         <hr>
+         <div class="record-images">
+          <ul>
+           {%for im in object.image_set.all%}
+           <li><a href="{{im.get_absolute_url}}"><img src="{{im.get_thumbnail_url}}"></a></li>
+           {%endfor%}
+           <li>
+          <ul>
+         </div>
+         {%endif%}
+
      </div>
  </div>
 {%endblock%}

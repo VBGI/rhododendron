@@ -137,15 +137,12 @@ class Image(UpdaterMixin):
             return ''
 
     @property
-    def image_path(self): #TODO : not working
+    def image_path(self): #TODO : not working (check needed!!!)
         '''Gets relative to MEDIA_ROOT image path'''
-
         if self.src:
             s = self.src.path
             s = s.replace(self.image_name, '')
             s = s.replace(settings.MEDIA_ROOT, '')
-            print("Getting the value", s)
-            print("Current media_root", settings.MEDIA_ROOT)
             return s
         else:
             return ''
