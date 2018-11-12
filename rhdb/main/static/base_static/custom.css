@@ -38,6 +38,9 @@ list-style-type: none;
 background-color: #d1e5cf;
 }
 
+.record-images ul li:hover {
+background-color: inherit;
+}
 
 
 @media only screen and (min-width: 768px) {
@@ -45,10 +48,7 @@ background-color: #d1e5cf;
 .title-image{
 background-image: url('/static/images/base.png');
 width: 100%;
-}
-
-}
-
+}}
 
 
 .title-smooth {
